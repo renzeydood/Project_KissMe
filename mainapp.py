@@ -1,5 +1,6 @@
 import os
 import errno
+import argparse as ap
 import math as m
 import time as t
 import json as js
@@ -17,11 +18,19 @@ from kissnet import KissNet
 DELAY_PER_VIDEO_ACCESS = 0
 DELAY_PER_DOWNLOADS = 0
 
-GECKO_DRIVER_PATH = "C:\geckodriver\geckodriver.exe"
-KISSANIME_USERNAME = ""
-KISSANIME_PASSWORD = ""
-KISSASIAN_USERNAME = ""
-KISSASIAN_PASSWORD = ""
+GECKO_DRIVER_PATH = r"C:/geckodriver/geckodriver.exe"
+DOWNLOAD_LOCATION = r"C:/Users/Renzey/Downloads/"
+KISSANIME_USERNAME = "renzeydood"
+KISSANIME_PASSWORD = "mark1992"
+KISSASIAN_USERNAME = "renzeydood"
+KISSASIAN_PASSWORD = "mark1992"
+
+def read_app_args():
+    parser = ap.ArgumentParser()
+    parser.add_argument("-s", "--subs", required=False, default="subscriptions.json", help="Subscription file to open. subscriptions.json is opened by default if left blank.")
+    parser.add_argument("-m", "--mode", required=False, default="all", help="all= Default, it will search links and then download. search= Only search and grabs new episode links. download= Only download from links in json file.")
+    args = vars(parser.parse_args())
+    return args
 
 def open_sub_file(subFile):
     try:
@@ -167,7 +176,7 @@ def get_download_link(driver, kn, series, loginstatus=False):
             t.sleep(DELAY_PER_VIDEO_ACCESS)
 
 def download_file(series, loginstatus=False):
-    home = ""
+    home = DOWNLOAD_LOCATION
 
     for ep in series["EpisodeLinks"]:
         if not os.path.exists(os.path.dirname(home + series["Title"] + "/")):
@@ -177,7 +186,7 @@ def download_file(series, loginstatus=False):
                 if exc.errno != errno.EEXIST:
                     raise
 
-        with open(home + series["Title"] + "/" + series["Title"] + " EP" + "{0:02d}".format(ep["Num"]) + ".mp4", 'w') as f:
+        with open(home + series["Title"] + "/" + series["Title"] + " EP" + "{0:02d}".format(ep["Num"]) + ".mp4", 'wb') as f:
             print(ep["Linkmp4host"])
             if loginstatus is True:
                 page = req.get(ep["Linkmp4host"], stream=True)
@@ -205,14 +214,17 @@ def download_file(series, loginstatus=False):
         t.sleep(DELAY_PER_DOWNLOADS)
 
 def mode_grab_THEN_download():
-    #Setup the sources
+    KAsLogin = False
+    KAnLogin = False
+
+    args = read_app_args()
     KissAsianNet = KissNet("http://kissasian.sh", 'Login', 'Drama', "&s=rapid", KISSASIAN_USERNAME, KISSASIAN_PASSWORD)
     KissAnimeNet = KissNet("http://kissanime.ru", 'Login', 'Anime', "&s=rapidvideo", KISSANIME_USERNAME, KISSANIME_PASSWORD)
-    
-    LOGINSTATUS = True
 
-    sources = open_sub_file("subscriptions.json")
+    print("******** KISS ME START! ********")
+    sources = open_sub_file(args["subs"])
     
+    print("")
     print("=== Episode Links ===")
     
     scraper = init_cfscraper()
@@ -275,11 +287,15 @@ def mode_grab_THEN_download():
         else:
             for series in sources["Sources"][source]:
                 print("Downloading files for: " + series["Title"])
-                download_file(series, loginstatus=LOGINSTATUS)
+                if(source == "KissAsian"):
+                    download_file(series, loginstatus=KAsLogin)
+                if(source == "KissAnime"):
+                    download_file(series, loginstatus=KAnLogin)
 
             print("All files downloaded for: " + source)
 
     print("*** All files downloaded ***")
+    print("******** KISS ME STOPPED! ********")
 
 def mode_grab_AND_download():
     pass

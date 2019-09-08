@@ -55,20 +55,27 @@ eg: https:/<span></span>/kissasian.sh/Drama/The-Link-Of-The-Drama
 #### Main Program
 in mainapp.py<span></span>
 ```python
-GECKO_DRIVER_PATH = "C:\geckodriver\geckodriver.exe"
+GECKO_DRIVER_PATH = r"C:\geckodriver\geckodriver.exe"
+DOWNLOAD_LOCATION = r"C:/Users/Renzey/Downloads/"
 KISSANIME_USERNAME = ""
 KISSANIME_PASSWORD = ""
 KISSASIAN_USERNAME = ""
 KISSASIAN_PASSWORD = ""
 ```
--Add the path where you extracted the geckodriver to the GECKO_DRIVER_PATH
--While the program works without having a Kiss- account. The download links will expire much faster because the link is grabbed from the video stream source.
--Next, just run the python app in terminal and let it run until it has completed downloading the episodes!
+- Add the path where you extracted the geckodriver to the GECKO_DRIVER_PATH
+- While the program works without having a Kiss- account. The download links will expire much faster because the link is grabbed from the video stream source.
+- Next, run the python app in terminal and let it run until it has completed downloading the episodes!
 
-##Limitations
--Script function is directly tied to the structure of the html. If the structure changes, the script may not work anymore.
--Can only download 1 file at a time
--The server uses CloudFlare which is very javascript heavy. Using requests alone won't work in accessing the website. Thus, Selenium is used to simulate the browser. Which can be slow (Delays must be present for the javascript to fully load) 
+#### Optional command line arguments
+|Name|Input   |Info   |
+|---|---|---|
+|s   |any .json subscription file|Subscription file to open|
+
+## Limitations
+- Script function is directly tied to the structure of the html. If the structure changes, the script may not work anymore.
+- Can only download 1 file at a time
+- The server uses CloudFlare which is very javascript heavy. Using requests alone won't work in accessing the website. Thus, Selenium is used to simulate the browser. Which can be slow (Delays must be present for the javascript to fully load)
+- Only rapidvideo source is working
 
 ## Planned Features
 - Enable to work with movies
@@ -80,5 +87,9 @@ KISSASIAN_PASSWORD = ""
 
 ## Release History
 
+* 0.6.1
+    * Bug fixes
+    * Added command line optional arguments. User can now choose a specific subscription file to open. But default is subscription.json
+    e.g.: python mainapp<span></span>.py -s mysubs.json
 * 0.5.0
     * Beta release
