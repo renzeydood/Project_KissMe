@@ -1,4 +1,3 @@
-
 class KissNet():
     def __init__(self, home, login, target, source='', username='', password=''):
         self.home = home
@@ -11,7 +10,7 @@ class KissNet():
 
     def home_link(self):
         return self.home + r'/' + self.home
-    
+
     def login_link(self):
         return self.home + r'/' + self.login
 
